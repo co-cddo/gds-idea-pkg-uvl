@@ -1,13 +1,19 @@
 [project]
 name = "gds-idea-pkg-uvl"
-description = "TODO: add description"
+description = "Manage multiple uv projects in one directory."
 readme = "README.md"
 authors = [
-    { name = "Jarek-Rolski", email = "jaroslaw.rolski@yahoo.com" }
+    { name = "Jarek-Rolski", email = "jaroslaw.rolski@dsit.gov.uk" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "click>=8.5.0",
+    "python-dotenv>=1.2.3",
+]
 dynamic = ["version"]
+
+[project.scripts]
+uvl = "uvl.cli:cli"
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
@@ -50,6 +56,12 @@ LICENCE = "sha256:21cc325b3181cb748845827425d37ce04b3dc563835bbf50fafbc56a5eb68c
 ".github/dependabot.yml" = "sha256:8472c537c3808394c9200ac7f67e61ce565981583c6f7f381339f1df255fb318"
 ".pre-commit-config.yaml" = "sha256:376617ea56a3e3b6691e423e33c1faeff299e95205c54208bbd3b3a5c619bd57"
 ".github/workflows/release.yml" = "sha256:d2c22e66042f7f7fca4dc1066ff3ffaa4303df9c8a57953684a0a927731b1fe6"
+
+[tool.uv.workspace]
+members = [
+    "test-project",
+    "test-project2",
+]
 [dependency-groups]
 dev = [
     "pre-commit>=4.6.2",
