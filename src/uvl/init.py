@@ -9,11 +9,38 @@ from uvl.utils import _execute_command
 
 
 def _init(
-    uv_projects_directory: str = None,
-    uv_project: str = None,
+    uv_projects_directory: str | None = None,
+    uv_project: str | None = None,
     create_if_not_exists: bool = False,
     add_local_group: bool = False,
-):
+) -> None:
+    """Configure ``.env`` for a uv project and sync its dependencies.
+
+    Persists ``UV_PROJECT_ENVIRONMENT``, ``UV_PROJECTS_DIRECTORY``, and
+    ``UV_PROJECT`` values into the local ``.env`` file (creating/reusing
+    values as needed), optionally scaffolds the project directory with
+    ``uv init`` if it does not exist, optionally adds an ``ipykernel``
+    dependency to a ``local`` dependency group, and finally runs
+    ``uv sync`` (using the ``local`` group when present).
+
+    Args:
+        uv_projects_directory: Directory containing uv projects, relative
+            to the current working directory. If None, the value is read
+            from ``.env`` (``UV_PROJECTS_DIRECTORY``), defaulting to the
+            current working directory.
+        uv_project: Name of the uv project (sub-folder) to initialize. If
+            None, the value is read from ``.env`` (``UV_PROJECT``).
+        create_if_not_exists: If True and the project's ``pyproject.toml``
+            does not exist, scaffold it via ``uv init``. If False, exit
+            with an error instead.
+        add_local_group: If True, add an ``ipykernel`` dependency under a
+            ``local`` dependency group before syncing.
+
+    Raises:
+        SystemExit: If the project does not exist and
+            ``create_if_not_exists`` is False, or if any invoked ``uv``
+            command fails.
+    """
     cwd = os.getcwd()
     dotenv_path = ".env"
     config = dotenv_values(dotenv_path)

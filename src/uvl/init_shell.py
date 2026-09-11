@@ -16,8 +16,29 @@ def _create_completion_files(
     completion_folder: str,
     zshrc_file_path: str,
     zshrc_file_content: str,
-    env: dict[str] = None,
-):
+    env: dict[str, str] | None = None,
+) -> None:
+    """Generate a zsh completion file for an app and wire it up in .zshrc.
+
+    Runs ``command`` to capture the app's zsh completion script, writes it
+    to ``<completion_folder>/<app_name>-complete.zsh``, and ensures
+    ``.zshrc`` loads ``compinit`` and sources the generated file (appending
+    lines only if not already present).
+
+    Args:
+        app_name: Name of the application, used to build the completion
+                  file name.
+        command: Command (and arguments) to execute that prints the zsh
+                  completion script to stdout.
+        completion_folder: Directory where the completion file will be
+                            written.
+        zshrc_file_path: Path to the user's ``.zshrc`` file to update.
+        zshrc_file_content: Current contents of ``.zshrc``, used to avoid
+                             duplicate entries.
+        env: Optional environment variables to pass when running
+             ``command``. If None, the command runs with the current
+             process environment.
+    """
     if env is None:
         output = _execute_command(command, capture_output=True)
     else:
@@ -34,7 +55,22 @@ def _create_completion_files(
         _write_to_file(zshrc_file_path, source_file_command)
 
 
-def _init_shell(uv: bool, uvl: bool, click_package_name: str):
+def _init_shell(uv: bool, uvl: bool, click_package_name: str | None) -> None:
+    """Install zsh completion for uv, uvl, and/or another click-based CLI.
+
+    Ensures the ``~/.complete`` folder exists, then for each requested tool
+    generates its zsh completion script and wires it into ``~/.zshrc`` via
+    :func:`_create_completion_files`. When ``uvl`` completion is requested,
+    also appends a small ``uvl`` zsh wrapper function (``_uvl_zsh_script``)
+    that re-exports ``.env`` values after each invocation.
+
+    Args:
+        uv: If True, install completion for the ``uv`` CLI.
+        uvl: If True, install completion for the ``uvl`` CLI and the
+             ``uvl`` zsh wrapper function.
+        click_package_name: If provided, install completion for an
+            arbitrary click-based CLI with this executable name.
+    """
     home_dir = os.path.expanduser("~")
     zshrc_file_path = os.path.join(home_dir, ".zshrc")
     with open(zshrc_file_path) as f:
