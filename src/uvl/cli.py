@@ -7,7 +7,7 @@ from click_default_group import DefaultGroup
 from dotenv import dotenv_values
 
 
-@click.group(cls=DefaultGroup, default="init", default_if_no_args=True)
+@click.group(cls=DefaultGroup, default="init", default_if_no_args=False)
 @click.pass_context
 @click.version_option(prog_name="uvl", package_name="gds-idea-pkg-uvl")
 def cli(ctx):
