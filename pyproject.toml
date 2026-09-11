@@ -8,6 +8,7 @@ authors = [
 requires-python = ">=3.11"
 dependencies = [
     "click>=8.5.0",
+    "click-default-group>=1.2.4",
     "python-dotenv>=1.2.3",
 ]
 dynamic = ["version"]
@@ -61,6 +62,7 @@ LICENCE = "sha256:21cc325b3181cb748845827425d37ce04b3dc563835bbf50fafbc56a5eb68c
 members = [
     "test-project",
     "test-project2",
+    "proj",
 ]
 [dependency-groups]
 dev = [
