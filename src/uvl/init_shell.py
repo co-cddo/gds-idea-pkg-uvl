@@ -5,7 +5,7 @@ from uvl.utils import _execute_command, _write_to_file
 _uvl_zsh_script = """\
 uvl() {
   command uvl "$@"
-  [ -f ".env" ] && export $(cat .env | xargs)
+  [ -f ".env" ] && export $(cat .env | xargs) || true
 }
 """
 
