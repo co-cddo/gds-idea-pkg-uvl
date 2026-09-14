@@ -76,7 +76,7 @@ def _init(
             env=my_env,
         )
 
-    load_dotenv(override=True)
+    load_dotenv(dotenv_path, override=True)
 
     if add_local_group:
         _execute_command(["uv", "add", "--group", "local", "ipykernel"])
