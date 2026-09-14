@@ -1,6 +1,6 @@
-import tomllib
 import os
 import sys
+import tomllib
 
 import click
 from dotenv import dotenv_values, load_dotenv, set_key
@@ -72,7 +72,8 @@ def _init(
         my_env = os.environ.copy()
         my_env.pop("UV_PROJECT", None)
         _execute_command(
-            ["uv", "init", "--app", "--no-package", "--author-from", "auto", "--name", uv_project, uv_project_dir], env=my_env
+            ["uv", "init", "--app", "--no-package", "--author-from", "auto", "--name", uv_project, uv_project_dir],
+            env=my_env,
         )
 
     load_dotenv(override=True)
