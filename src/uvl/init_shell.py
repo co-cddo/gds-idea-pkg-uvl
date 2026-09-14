@@ -5,7 +5,7 @@ from uvl.utils import _execute_command, _write_to_file
 _uvl_zsh_script = """\
 uvl() {
   command uvl "$@"
-  export $(xargs <.env)
+  [ -f ".env" ] && export $(cat .env | xargs)
 }
 """
 
@@ -85,11 +85,11 @@ def _init_shell(uv: bool, uvl: bool, click_package_name: str | None) -> None:
     if uvl:
         if _uvl_zsh_script not in zshrc_file_content:
             _write_to_file(zshrc_file_path, _uvl_zsh_script)
-        my_env = os.environ
+        my_env = os.environ.copy()
         my_env["_UVL_COMPLETE"] = "zsh_source"
         _create_completion_files("uvl", ["uvl"], completion_folder, zshrc_file_path, zshrc_file_content, env=my_env)
     if click_package_name:
-        my_env = os.environ
+        my_env = os.environ.copy()
         my_env[f"_{click_package_name.upper().replace('-', '_')}_COMPLETE"] = "zsh_source"
         _create_completion_files(
             click_package_name, [click_package_name], completion_folder, zshrc_file_path, zshrc_file_content, env=my_env

@@ -1,4 +1,4 @@
-import configparser
+import tomllib
 import os
 import sys
 
@@ -69,8 +69,10 @@ def _init(
         sys.exit(1)
     elif not pyproject_exists and create_if_not_exists:
         os.makedirs(uv_project_dir, exist_ok=True)
+        my_env = os.environ.copy()
+        my_env.pop("UV_PROJECT", None)
         _execute_command(
-            ["uv", "init", "--app", "--no-package", "--author-from", "auto", "--name", uv_project, uv_project_dir]
+            ["uv", "init", "--app", "--no-package", "--author-from", "auto", "--name", uv_project, uv_project_dir], env=my_env
         )
 
     load_dotenv(override=True)
@@ -78,9 +80,11 @@ def _init(
     if add_local_group:
         _execute_command(["uv", "add", "--group", "local", "ipykernel"])
 
-    config = configparser.RawConfigParser(allow_no_value=True)
-    config.read(pyproject_path)
-    if config.has_option("dependency-groups", "local"):
+    pyproject_config = {}
+    if os.path.exists(pyproject_path):
+        with open(pyproject_path, "rb") as f:
+            pyproject_config = tomllib.load(f)
+    if "local" in pyproject_config.get("dependency-groups", {}):
         _execute_command(["uv", "sync", "--group", "local"])
     else:
         _execute_command(["uv", "sync"])
